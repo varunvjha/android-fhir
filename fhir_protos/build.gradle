@@ -1,0 +1,6 @@
+// A module that contains a custom FHIR protos library that contains search parameters as defined in
+// the specifications.
+// This module should be replaced and added as direct dependencies once search parameters are
+// released as part of the FHIR protos project on GMaven.
+configurations.maybeCreate("default")
+artifacts.add("default", file('r4_lib.jar'))

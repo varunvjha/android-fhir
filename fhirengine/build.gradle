@@ -64,13 +64,13 @@ dependencies {
         exclude module:'junit'
     }
     api "org.opencds.cqf:cql-engine:$cqlEngineVersion"
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     api "androidx.work:work-runtime-ktx:$workManagerVersion"
     implementation "com.google.guava:guava:$guavaVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.opencds.cqf:cql-engine-fhir:$cqlEngineVersion"
+    implementation project(path: ':fhir_protos')
     kapt "androidx.room:room-compiler:$roomVersion"
 
     testImplementation "androidx.test:core:$testVersion"

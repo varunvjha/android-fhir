@@ -1,2 +1,3 @@
+include ':fhir_protos'
 include ':example'
 include ':fhirengine'
