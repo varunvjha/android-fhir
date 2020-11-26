@@ -16,6 +16,7 @@
 
 package com.google.fhirengine.index
 
+import com.google.fhir.shaded.protobuf.Message
 import org.hl7.fhir.r4.model.Resource
 
 /**
@@ -29,5 +30,5 @@ internal interface FhirIndexer {
      *
      * @param <R> The resource type which should be a subtype of [Resource].
      */
-    fun <R : Resource> index(resource: R): ResourceIndices
+    fun <R : Message> index(resource: R): ResourceIndices
 }

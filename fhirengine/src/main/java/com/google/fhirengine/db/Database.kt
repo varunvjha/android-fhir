@@ -16,10 +16,10 @@
 
 package com.google.fhirengine.db
 
+import com.google.fhir.r4.core.ResourceTypeCode
+import com.google.fhir.shaded.protobuf.Message
 import com.google.fhirengine.db.impl.entities.SyncedResourceEntity
 import com.google.fhirengine.search.impl.Query
-import org.hl7.fhir.r4.model.Resource
-import org.hl7.fhir.r4.model.ResourceType
 
 /** The interface for the FHIR resource database.  */
 interface Database {
@@ -29,7 +29,7 @@ interface Database {
      *
      * @param <R> The resource type
      */
-    fun <R : Resource> insert(resource: R)
+    fun <R : Message> insert(resource: R)
 
     /**
      * Inserts a list of `resource`s into the FHIR resource database. If any of the resources
@@ -37,7 +37,7 @@ interface Database {
      *
      * @param <R> The resource type
      */
-    fun <R : Resource> insertAll(resources: List<R>)
+    fun <R : Message> insertAll(resources: List<R>)
 
     /**
      * Updates the `resource` in the FHIR resource database. If the resource does not already
@@ -45,7 +45,7 @@ interface Database {
      *
      * @param <R> The resource type
      */
-    fun <R : Resource> update(resource: R)
+    fun <R : Message> update(resource: R)
 
     /**
      * Selects the FHIR resource of type `clazz` with `id`.
@@ -54,14 +54,14 @@ interface Database {
      * @throws ResourceNotFoundInDbException if the resource is not found in the database
      */
     @Throws(ResourceNotFoundInDbException::class)
-    fun <R : Resource> select(clazz: Class<R>, id: String): R
+    fun <R : Message> select(clazz: Class<R>, id: String): R
 
     /**
      * Return the last update data of a resource based on the resource type.
      * If no resource of [resourceType] is inserted, return `null`.
      * @param resourceType The resource type
      */
-    suspend fun lastUpdate(resourceType: ResourceType): String?
+    suspend fun lastUpdate(resourceType: ResourceTypeCode.Value): String?
 
     /**
      * Insert a resource that was syncronised.
@@ -70,7 +70,7 @@ interface Database {
      */
     suspend fun insertSyncedResources(
       syncedResourceEntity: SyncedResourceEntity,
-      resources: List<Resource>
+      resources: List<Message>
     )
 
     /**
@@ -78,7 +78,7 @@ interface Database {
      *
      * @param <R> The resource type
      */
-    fun <R : Resource> delete(clazz: Class<R>, id: String)
+    fun <R : Message> delete(clazz: Class<R>, id: String)
 
     /**
      * Returns a [List] of [Resource]s that are of type `clazz` and have `reference` with `value`.
@@ -87,7 +87,7 @@ interface Database {
      * 'subject' and `value` 'Patient/1' will return all observations associated with the
      * particular patient.
      */
-    fun <R : Resource> searchByReference(
+    fun <R : Message> searchByReference(
       clazz: Class<R>,
       reference: String,
       value: String
@@ -99,7 +99,7 @@ interface Database {
      * For example, a search for [org.hl7.fhir.r4.model.Patient]s with `string` 'given'
      * and `value` 'Tom' will return all patients with a given name Tom.
      */
-    fun <R : Resource> searchByString(
+    fun <R : Message> searchByString(
       clazz: Class<R>,
       string: String,
       value: String
@@ -113,7 +113,7 @@ interface Database {
      * 'http://openmrs.org/concepts' and `value` '1427AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' will return
      * all observations with the given code.
      */
-    fun <R : Resource> searchByCode(
+    fun <R : Message> searchByCode(
       clazz: Class<R>,
       code: String,
       system: String,
@@ -129,7 +129,7 @@ interface Database {
      * 'http://openmrs.org/concepts' and `value` '1427AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' will return
      * all observations associated with the particular patient by reference and with the given code.
      */
-    fun <R : Resource> searchByReferenceAndCode(
+    fun <R : Message> searchByReferenceAndCode(
       clazz: Class<R>,
       reference: String,
       referenceValue: String,
@@ -138,5 +138,5 @@ interface Database {
       codeValue: String
     ): List<R>
 
-    fun <R : Resource> search(query: Query): List<R>
+    fun <R : Message> search(query: Query): List<R>
 }

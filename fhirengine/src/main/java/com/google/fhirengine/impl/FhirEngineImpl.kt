@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.google.fhir.shaded.protobuf.Message
 import com.google.fhirengine.FhirEngine
 import com.google.fhirengine.ResourceNotFoundException
 import com.google.fhirengine.db.Database
@@ -34,7 +35,6 @@ import com.google.fhirengine.sync.SyncConfiguration
 import com.google.fhirengine.sync.SyncWorkType
 import java.util.EnumSet
 import org.cqframework.cql.elm.execution.VersionedIdentifier
-import org.hl7.fhir.r4.model.Resource
 import org.opencds.cqf.cql.data.DataProvider
 import org.opencds.cqf.cql.execution.CqlEngine
 import org.opencds.cqf.cql.execution.EvaluationResult
@@ -66,20 +66,20 @@ class FhirEngineImpl constructor(
         EnumSet.noneOf(CqlEngine.Options::class.java)
     )
 
-    override fun <R : Resource> save(resource: R) {
+    override fun <R : Message> save(resource: R) {
         database.insert(resource)
     }
 
-    override fun <R : Resource> saveAll(resources: List<R>) {
+    override fun <R : Message> saveAll(resources: List<R>) {
         database.insertAll(resources)
     }
 
-    override fun <R : Resource> update(resource: R) {
+    override fun <R : Message> update(resource: R) {
         database.update(resource)
     }
 
     @Throws(ResourceNotFoundException::class)
-    override fun <R : Resource> load(clazz: Class<R>, id: String): R {
+    override fun <R : Message> load(clazz: Class<R>, id: String): R {
         return try {
             database.select(clazz, id)
         } catch (e: ResourceNotFoundInDbException) {
@@ -87,7 +87,7 @@ class FhirEngineImpl constructor(
         }
     }
 
-    override fun <R : Resource> remove(clazz: Class<R>, id: String): R {
+    override fun <R : Message> remove(clazz: Class<R>, id: String): R {
         throw UnsupportedOperationException("Not implemented yet!")
     }
 

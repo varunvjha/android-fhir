@@ -18,6 +18,12 @@ package com.google.fhirengine.index.impl
 
 import android.util.Log
 import ca.uhn.fhir.model.api.annotation.SearchParamDefinition
+import com.google.fhir.common.JsonFormat
+import com.google.fhir.proto.Annotations
+import com.google.fhir.r4.core.Patient
+import com.google.fhir.r4.core.ResourceTypeCode
+import com.google.fhir.shaded.gson.JsonParser
+import com.google.fhir.shaded.protobuf.Message
 import com.google.fhirengine.index.FhirIndexer
 import com.google.fhirengine.index.ResourceIndices
 import com.google.fhirengine.index.entities.DateIndex
@@ -27,30 +33,25 @@ import com.google.fhirengine.index.entities.ReferenceIndex
 import com.google.fhirengine.index.entities.StringIndex
 import com.google.fhirengine.index.entities.TokenIndex
 import com.google.fhirengine.index.entities.UriIndex
+import com.google.fhirengine.resource.id
+import com.google.fhirengine.resource.type
+import org.hl7.fhir.r4.model.Resource
 import java.math.BigDecimal
 import java.util.Locale
-import org.hl7.fhir.instance.model.api.IBaseDatatype
-import org.hl7.fhir.r4.model.BaseDateTimeType
-import org.hl7.fhir.r4.model.CodeableConcept
-import org.hl7.fhir.r4.model.Coding
-import org.hl7.fhir.r4.model.Money
-import org.hl7.fhir.r4.model.Quantity
-import org.hl7.fhir.r4.model.Range
-import org.hl7.fhir.r4.model.Ratio
-import org.hl7.fhir.r4.model.Reference
-import org.hl7.fhir.r4.model.Resource
-import org.hl7.fhir.r4.model.StringType
-import org.hl7.fhir.r4.model.UriType
 
 /** Implementation of [FhirIndexer].  */
 internal class FhirIndexerImpl constructor() : FhirIndexer {
-    override fun <R : Resource> index(resource: R): ResourceIndices {
+    override fun <R : Message> index(resource: R): ResourceIndices {
         return extractIndexValues(resource)
     }
 
     /** Extracts the values to be indexed for `resource`.  */
-    private fun <R : Resource> extractIndexValues(resource: R): ResourceIndices {
-        val indexBuilder = ResourceIndices.Builder(resource.resourceType, resource.id)
+    private fun <R : Message> extractIndexValues(resource: R): ResourceIndices {
+        val indexBuilder = ResourceIndices.Builder(resource.type, resource.id)
+
+        val p: Patient
+        p.
+
         resource.javaClass.fields.asSequence().mapNotNull {
             it.getAnnotation(SearchParamDefinition::class.java)
         }.filter {
@@ -82,6 +83,8 @@ internal class FhirIndexerImpl constructor() : FhirIndexer {
                             }
                 }
                 SEARCH_PARAM_DEFINITION_TYPE_CODE -> {
+                    val resource: Resource
+
                     resource.valuesForPath(searchParamDefinition).codeValues().forEach { code ->
                         val system = code.system
                         val value = code.code

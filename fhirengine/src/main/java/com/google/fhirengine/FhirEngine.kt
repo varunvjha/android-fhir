@@ -16,11 +16,11 @@
 
 package com.google.fhirengine
 
+import com.google.fhir.shaded.protobuf.Message
 import com.google.fhirengine.search.Search
 import com.google.fhirengine.sync.PeriodicSyncConfiguration
 import com.google.fhirengine.sync.Result
 import com.google.fhirengine.sync.SyncConfiguration
-import org.hl7.fhir.r4.model.Resource
 import org.opencds.cqf.cql.execution.EvaluationResult
 
 /** The FHIR Engine interface that handles the local storage of FHIR resources.  */
@@ -31,7 +31,7 @@ interface FhirEngine {
      *
      * @param <R> The resource type which should be a subtype of [Resource].
      */
-    fun <R : Resource> save(resource: R)
+    fun <R : Message> save(resource: R)
 
     /**
      * Saves a list of FHIR `resource` in the local storage. If any of the resources already
@@ -39,14 +39,14 @@ interface FhirEngine {
      *
      * @param <R> The resource type which should be a subtype of [Resource].
      */
-    fun <R : Resource> saveAll(resources: List<R>)
+    fun <R : Message> saveAll(resources: List<R>)
 
     /**
      * Updates a FHIR `resource` in the local storage.
      *
      * @param <R> The resource type which should be a subtype of [Resource].
      */
-    fun <R : Resource> update(resource: R)
+    fun <R : Message> update(resource: R)
 
     /**
      * Returns a FHIR resource of type `clazz` with `id` from the local storage.
@@ -55,14 +55,14 @@ interface FhirEngine {
      * @throws ResourceNotFoundException if the resource is not found
      */
     @Throws(ResourceNotFoundException::class)
-    fun <R : Resource> load(clazz: Class<R>, id: String): R
+    fun <R : Message> load(clazz: Class<R>, id: String): R
 
     /**
      * Removes a FHIR resource of type `clazz` with `id` from the local storage.
      *
      * @param <R> The resource type which should be a subtype of [Resource].
      */
-    fun <R : Resource> remove(clazz: Class<R>, id: String): R
+    fun <R : Message> remove(clazz: Class<R>, id: String): R
 
     /** Returns the result of a CQL evaluation provided with the ID of the library.  */
     fun evaluateCql(libraryVersionId: String, context: String, expression: String): EvaluationResult

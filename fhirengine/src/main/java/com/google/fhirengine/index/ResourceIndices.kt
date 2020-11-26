@@ -16,6 +16,7 @@
 
 package com.google.fhirengine.index
 
+import com.google.fhir.r4.core.ResourceTypeCode
 import com.google.fhirengine.index.entities.DateIndex
 import com.google.fhirengine.index.entities.NumberIndex
 import com.google.fhirengine.index.entities.QuantityIndex
@@ -23,7 +24,6 @@ import com.google.fhirengine.index.entities.ReferenceIndex
 import com.google.fhirengine.index.entities.StringIndex
 import com.google.fhirengine.index.entities.TokenIndex
 import com.google.fhirengine.index.entities.UriIndex
-import org.hl7.fhir.r4.model.ResourceType
 
 /**
  * Encapsulation of a FHIR resource (its resource type and ID) and all the indices that are
@@ -36,7 +36,7 @@ import org.hl7.fhir.r4.model.ResourceType
  */
 internal data class ResourceIndices(
   /** The resource type.  */
-  val resourceType: ResourceType,
+  val resourceType: ResourceTypeCode.Value,
   /** The ID of the resource.  */
   val id: String,
   /** The string indices.  */
@@ -57,7 +57,7 @@ internal data class ResourceIndices(
 ) {
 
     class Builder(
-      val resourceType: ResourceType,
+      val resourceType: ResourceTypeCode.Value,
       val id: String
     ) {
         private val stringIndices = mutableListOf<StringIndex>()
