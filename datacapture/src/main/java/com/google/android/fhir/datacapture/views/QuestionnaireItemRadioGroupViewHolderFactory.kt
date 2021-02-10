@@ -22,10 +22,11 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import com.google.android.fhir.datacapture.R
-import com.google.fhir.r4.core.Coding
+import com.google.android.fhir.datacapture.displayString
+import com.google.android.fhir.datacapture.responseAnswerValueX
 import com.google.fhir.r4.core.QuestionnaireResponse
 
-object QuestionnaireItemRadioGroupViewHolderFactory : QuestionnaireItemViewHolderFactory(
+internal object QuestionnaireItemRadioGroupViewHolderFactory : QuestionnaireItemViewHolderFactory(
     R.layout.questionnaire_item_radio_group_view
 ) {
     override fun getQuestionnaireItemViewHolderDelegate() =
@@ -48,44 +49,27 @@ object QuestionnaireItemRadioGroupViewHolderFactory : QuestionnaireItemViewHolde
                     questionnaireResponseItemBuilder.answerList.singleOrNull()?.value?.coding
                 radioHeader.text = questionnaireItem.text.value
                 radioGroup.removeAllViews()
-
-                // TODO: support other answer types besides coding
+                var index = 0
                 questionnaireItem.answerOptionList.forEach {
                     radioGroup.addView(RadioButton(radioGroup.context).apply {
-                        text = it.value.coding.displayValue
+                        id = index++ // Use the answer option index as radio button ID
+                        text = it.displayString
                         layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT
                         )
-                        if (questionnaireItemViewItem.singleAnswerOrNull
-                                ?.value?.coding?.equals(answer) == true) {
-                            this.isChecked = true
-                        }
-                        setOnCheckedChangeListener { buttonView, isChecked ->
-                            if (isChecked) {
-                                questionnaireResponseItemBuilder.clearAnswer().addAnswer(
-                                    QuestionnaireResponse.Item.Answer.newBuilder().apply {
-                                        value =
-                                            QuestionnaireResponse.Item.Answer.ValueX.newBuilder()
-                                                .apply {
-                                                    coding = it.value.coding
-                                                }.build()
-                                    }
-                                )
-                            }
-                        }
+                        this.isChecked = it.value.coding == answer
                     })
+                }
+                radioGroup.setOnCheckedChangeListener { _, checkedId ->
+                    questionnaireResponseItemBuilder.clearAnswer().addAnswer(
+                        QuestionnaireResponse.Item.Answer.newBuilder().apply {
+                            value = questionnaireItem
+                                .answerOptionList[checkedId].responseAnswerValueX
+                        }
+                    )
+                    questionnaireItemViewItem.questionnaireResponseItemChangedCallback()
                 }
             }
         }
 }
-
-val Coding.displayValue: String
-    get() {
-        val display = this.display.value
-        return if (display.isEmpty()) {
-            this.code.value
-        } else {
-            display
-        }
-    }

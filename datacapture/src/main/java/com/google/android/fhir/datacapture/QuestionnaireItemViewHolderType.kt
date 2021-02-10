@@ -26,7 +26,7 @@ package com.google.android.fhir.datacapture
  * https://www.hl7.org/fhir/valueset-item-type.html and
  * http://hl7.org/fhir/R4/valueset-questionnaire-item-control.html.
  */
-enum class QuestionnaireItemViewHolderType(val value: Int) {
+internal enum class QuestionnaireItemViewHolderType(val value: Int) {
     GROUP(0),
     CHECK_BOX(1),
     DATE_PICKER(2),
@@ -35,7 +35,9 @@ enum class QuestionnaireItemViewHolderType(val value: Int) {
     EDIT_TEXT_MULTI_LINE(5),
     EDIT_TEXT_INTEGER(6),
     EDIT_TEXT_DECIMAL(7),
-    RADIO_GROUP(8);
+    RADIO_GROUP(8),
+    DROP_DOWN(9),
+    DISPLAY(10);
 
     companion object {
         private val VALUES = values()
